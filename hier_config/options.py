@@ -7,6 +7,7 @@ base_options: dict = {
     "parent_allows_duplicate_child": [],
     "sectional_exiting": [],
     "full_text_sub": [],
+    "default_sectional_exiting": None,
     "per_line_sub": [],
     "idempotent_commands_blacklist": [],
     "idempotent_commands": [],

@@ -30,6 +30,9 @@ indent_adjust: []
 
 parent_allows_duplicate_child: []
 
+# Specify a default sectional exiting string for exiting a config section (i.e. go back up the config hierarchy)
+default_sectional_exiting: null
+
 sectional_exiting:
 # This rule is used in the hierarchical_configuration unit test for .add_section_exiting()
 - lineage:

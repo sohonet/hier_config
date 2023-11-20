@@ -285,6 +285,16 @@ sectional_exiting:
   exit_text: exit-peer-session
 ```
 
+### default_sectional_exiting
+
+Where a device doesn't use command intendation and requires explicity returning back out of all config sections, you can specify a default value to exit the current configuration level
+
+An example is:
+
+```yaml
+default_sectional_exiting: back
+```
+
 #### full_text_sub
 
 Full text sub allows for substitutions of a multi-line string. Regular expressions are commonly used and allowed in this section. An example of this would be:

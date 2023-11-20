@@ -66,6 +66,7 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
         self.real_indent_level = -1
 
         self.options.setdefault("negation", "no")
+        self.options.setdefault("default_sectional_exiting", None)
         self._logs: List[str] = []
 
     def __repr__(self) -> str:
@@ -271,6 +272,9 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
         Adds the sectional exiting text as a child
         """
         for child in self.all_children():
+            if self.options["default_sectional_exiting"]:
+                if child.has_children():
+                    child.add_child(self.options["default_sectional_exiting"])
             for rule in self.options["sectional_exiting"]:
                 if child.lineage_test(rule):
                     exit_line = child.get_child("equals", rule["exit_text"])
