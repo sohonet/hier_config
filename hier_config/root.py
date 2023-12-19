@@ -369,8 +369,8 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
                     pass
                 continue
 
-            actual_indent = len(line) - len(line.lstrip())
-            line = " " * actual_indent + " ".join(line.split())
+            # actual_indent = len(line) - len(line.lstrip())
+            # line = " " * actual_indent + " ".join(line.split())
             for sub in self.options["per_line_sub"]:
                 line = re.sub(sub["search"], sub["replace"], line)
             line = line.rstrip()
