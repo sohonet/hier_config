@@ -161,6 +161,7 @@ base_options: dict = {
     "negation_default_when": [],
     "negation_negate_with": [],
     "negation_replace": [],
+    "rewrite_rules": [],
 }
 ```
 
@@ -392,6 +393,57 @@ no ipv6 prefix-list spine-to-leaf-v6 seq 1 permit 2801:80:3ea1:1::/64 ge 65
 result:
 no ipv6 prefix-list spine-to-leaf-v6 seq 1
 ```
+
+#### rewrite_rules
+
+Used to rewrite sections of remediation config.  This option is similar to
+per_line_sub but applied in the remediation config generation pipeline.
+
+Mandatory parameters:
+```text
+search - regex to match and separate by groups
+replace - replaced expression used by re.sub. Can be a fixed string or a group
+          sorted in search
+```
+
+e.g. - adva add flow
+```text
+network-element ne-1
+  configure nte nte ntexg108-1-1-1
+    configure access-port access-1-1-1-7
+      add flow flow-1-1-1-7-1 "SNW0081751" ...
+```
+
+```yaml
+negation_replace:
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: add flow
+  search:  add flow flow-(?P<flow_id>\S+) (?P<circuit_name>.+?).*
+  replace: |
+    configure flow flow-\g<flow_id>
+            circuit-name \g<circuit_name>
+            back
+```
+
+```text
+original:
+network-element ne-1
+  configure nte nte ntexg108-1-1-1
+    configure access-port access-1-1-1-7
+      add flow flow-1-1-1-7-1 "SNW0081751" ...
+
+result:
+network-element ne-1
+  configure nte nte ntexg108-1-1-1
+    configure access-port access-1-1-1-7
+      configure flow flow-1-1-1-7-1
+        circuit-name "SNW0081751"
+        back
+```
+
 
 ## Custom hier_config Workflows
 

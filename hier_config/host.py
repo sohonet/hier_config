@@ -80,6 +80,7 @@ class Host:
         else:
             raise AttributeError("Missing host.running_config or host.generated_config")
 
+        remediation.apply_rewrite_rules()
         remediation.add_sectional_exiting()
         remediation.set_order_weight()
         remediation.add_tags(self.hconfig_tags)

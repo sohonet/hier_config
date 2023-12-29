@@ -14,6 +14,7 @@ base_options: dict = {
     "negation_default_when": [],
     "negation_negate_with": [],
     "negation_replace": [],
+    "rewrite_rules": [],
 }
 ios_options: dict = {
     "style": "ios",

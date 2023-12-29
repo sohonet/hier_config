@@ -284,6 +284,32 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
                     exit_line.tags = child.tags
                     exit_line.order_weight = 999
 
+    def apply_rewrite_rules(self) -> None:
+        """
+        Applies rewrite rules on remediation config
+        """
+        for child in self.all_children():
+            for rule in self.options["rewrite_rules"]:
+                if child.lineage_test(rule):
+                    if rule.get("custom_adva_function"):
+                        # If we are changing a flow rule we will have a "delete add flow" line
+                        # If we find this, then apply our rewrite rule and remove the "delete add flow" line from the remediation
+                        # Otherwise, we keep the add flow line
+                        match = re.match(rule["search"], child.text)
+                        replaced_line = child.parent.get_child(
+                            "startswith",
+                            f'delete add flow flow-{match.group("flow_id")}',
+                        )
+                        if replaced_line:
+                            replaced_line.delete()
+                            line = re.sub(rule["search"], rule["replace"], child.text)
+                            child.text = line
+
+                    # Standard use
+                    else:
+                        line = re.sub(rule["search"], rule["replace"], child.text)
+                        child.text = line
+
     def future(self, config: HConfig) -> HConfig:
         """
         EXPERIMENTAL - predict the future config after config is applied to self
