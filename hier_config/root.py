@@ -292,17 +292,27 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
             for rule in self.options["rewrite_rules"]:
                 if child.lineage_test(rule):
                     if rule.get("custom_adva_function"):
-                        # If we are changing a flow rule we will have a "delete add flow" line
-                        # If we find this, then apply our rewrite rule and remove the "delete add flow" line from the remediation
-                        # Otherwise, we keep the add flow line
+                        # Problem: If we are changing a flow rule we will have a "delete add flow" line
+                        # Case: Change flow. If we find an "add flow" line, and a "delete flow" line, then remove the "delete flow" line from the remediation, and apply our custom rewrite rule
+                        # Case: Add flow. If we only find an "add flow" line, we will not match this rule and it will be kept.
+                        # Case: Delete flow. If we only find a "delete add flow" line, then apply custom negate_rewrite rule to this line
+
                         match = re.match(rule["search"], child.text)
-                        replaced_line = child.parent.get_child(
+                        add_flow_line = child.parent.get_child(
                             "startswith",
-                            f'delete add flow flow-{match.group("flow_id")}',
+                            f'add flow flow-{match.group("flow_id")}',
                         )
-                        if replaced_line:
-                            replaced_line.delete()
-                            line = re.sub(rule["search"], rule["replace"], child.text)
+
+                        # Case: we are changing a flow
+                        if add_flow_line:
+                            line = re.sub(rule["search"], rule["replace"], add_flow_line.text)
+                            print(line)
+                            child.delete()
+                            add_flow_line.text = line
+
+                        # Case: we are deleting a flow
+                        else:
+                            line = re.sub(rule["negation_search"], rule["negation_replace"], child.text)
                             child.text = line
 
                     # Standard use
