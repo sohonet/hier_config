@@ -306,7 +306,6 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
                         # Case: we are changing a flow
                         if add_flow_line:
                             line = re.sub(rule["search"], rule["replace"], add_flow_line.text)
-                            print(line)
                             child.delete()
                             add_flow_line.text = line
 
