@@ -193,6 +193,12 @@ negation_replace:
   - startswith: add target-address
   search: add (target-address "\S+") .*
   replace: 'delete \1 '
+# mgmt tunnel bridge
+- lineage:
+  - startswith: configure communication
+  - startswith: add mgmttunnel-bridge
+  search: add mgmttunnel-bridge (\d+) .*
+  replace: 'delete mgmttnl-bridge mgmt_tnl-\1'
 - lineage:
   - startswith: configure communication
   - startswith: add mgmttunnel

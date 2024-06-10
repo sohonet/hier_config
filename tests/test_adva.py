@@ -842,6 +842,62 @@ network-element ne-1
         assert remediation == os.linesep.join([s for s in str(host.remediation_config()).splitlines() if s.strip()])
 
 
+    def test_remove_mgmt_tunnel(self):
+        actual_config = """configure communication
+  add lpbk-if 1 "lo1" ipv4-only 10.32.22.66 255.255.255.0
+  add mgmttunnel-bridge 1 "sohonetInband" network-1-1-1-1 ethernet vlan-based enabled 431 disabled 256000 768000
+  add mgmttunnel-bridge 3 "access-1-1-1-3-mgmt-bridge" access-1-1-1-3 ethernet vlan-based enabled 431 disabled 256000 768000
+  configure src-addr sys-ip-addr "lo1" "lo1"
+  delete mgmttnl mgmt_tnl-1
+"""
+
+        intended_config = """configure communication
+  add lpbk-if 1 "lo1" ipv4-only 10.32.22.66 255.255.255.0
+  add mgmttunnel-bridge 1 "sohonetInband" network-1-1-1-1 ethernet vlan-based enabled 431 disabled 256000 768000
+  configure src-addr sys-ip-addr "lo1" "lo1"
+  delete mgmttnl mgmt_tnl-1
+"""
+
+        remediation = """configure communication
+  delete mgmttnl-bridge mgmt_tnl-3
+  back"""
+
+        host = Host("example1.rtr", self.os, self.options_adva)
+        host.load_running_config(actual_config)
+        host.load_generated_config(intended_config)
+        print(host.remediation_config())
+        assert remediation == os.linesep.join([s for s in str(host.remediation_config()).splitlines() if s.strip()])
+
+
+    def test_change_mgmt_tunnel(self):
+        actual_config = """configure communication
+  add lpbk-if 1 "lo1" ipv4-only 10.32.22.66 255.255.255.0
+  add mgmttunnel-bridge 1 "sohonetInband" network-1-1-1-1 ethernet vlan-based enabled 431 disabled 256000 768000
+  add mgmttunnel-bridge 3 "access1116c123" access-1-1-1-3 ethernet vlan-based enabled 431 disabled 256000 768000
+  configure src-addr sys-ip-addr "lo1" "lo1"
+  delete mgmttnl mgmt_tnl-1
+"""
+
+        intended_config = """configure communication
+  add lpbk-if 1 "lo1" ipv4-only 10.32.22.66 255.255.255.0
+  add mgmttunnel-bridge 1 "sohonetInband" network-1-1-1-1 ethernet vlan-based enabled 431 disabled 256000 768000
+  add mgmttunnel-bridge 3 "access-1-1-1-3-mgmt-bridge" access-1-1-1-3 ethernet vlan-based enabled 431 disabled 256000 768000
+  configure src-addr sys-ip-addr "lo1" "lo1"
+  delete mgmttnl mgmt_tnl-1
+"""
+
+        remediation = """configure communication
+  delete mgmttnl-bridge mgmt_tnl-3
+  add mgmttunnel-bridge 3 "access-1-1-1-3-mgmt-bridge" access-1-1-1-3 ethernet vlan-based enabled 431 disabled 256000 768000
+  back"""
+
+        host = Host("example1.rtr", self.os, self.options_adva)
+        host.load_running_config(actual_config)
+        host.load_generated_config(intended_config)
+        print(host.remediation_config())
+        assert remediation == os.linesep.join([s for s in str(host.remediation_config()).splitlines() if s.strip()])
+
+
 
 
 
