@@ -1,0 +1,272 @@
+---
+# Indicates the style of the configuration
+style: adva
+
+negation: delete
+
+# if there is a delta, negate the parents and re-write the parents with children
+sectional_overwrite: []
+
+# if there is a delta, overwrite these parents instead of one of their children
+sectional_overwrite_no_negate: []
+# - lineage:
+#   - startswith: network-element
+#   - startswith: configure nte
+#   - startswith: configure access-port
+#   - startswith: configure flow
+
+# The default order value is 500, with a range between 1 - 999.
+# Commands with smaller order values float to the top in the order of execution.
+# Commands with larger order values float to the bottom in the order of execution.
+# Syntax Example:
+# - lineage:
+#   - startswith:
+#     - no route-map
+#   order: 600
+ordering: []
+
+# adds +1 indent to lines following start_expression and removes the +1 indent for lines following end_expression
+indent_adjust: []
+
+parent_allows_duplicate_child: []
+
+# This rule is used in the hierarchical_configuration unit test for .add_section_exiting()
+# - lineage:
+#   - startswith: router bgp
+#   - startswith: template peer-policy
+#   exit_text: exit-peer-policy
+sectional_exiting: []
+
+# Add back to end of each section.
+default_sectional_exiting: back
+
+
+# substitions against the full multi-line config text
+full_text_sub: []
+#- search: 'banner\s(exec|motd)\s(\S)\n(.*\n){1,}(\2)'
+#  replace: ''
+#- search: 'banner\s(exec|motd)\s(\S.).+\n(.*\n){1,}.*(\2)'
+#  replace: ''
+#- search: 'banner\s(exec|motd)\s(\S.)\n(.*\n){1,}(\2)'
+#  replace: ''
+
+# substitions against each line of the config text
+per_line_sub: []
+
+idempotent_commands_blacklist: []
+
+# These commands do not require negation, they simply overwrite themselves
+idempotent_commands:
+- lineage:
+  - startswith: configure snmp
+  - startswith: configure target-address
+- lineage:
+  - startswith: configure system
+  - startswith:
+    - prompt
+    - security-banner
+- lineage:
+  - startswith: configure system
+  - startswith: ntp-client
+  - startswith: primary-server
+- lineage:
+  - startswith: configure system
+  - startswith: syslog-server
+  - startswith: configure ipv4-address
+- lineage:
+  - startswith: configure communication
+  - startswith: configure mgmttnl
+  - startswith: dhcp
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure
+  - startswith:
+    - alias
+    - media
+    - mtu
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: configure flow
+  - startswith: configure a2n-policer
+  - startswith:
+    - cbs
+    - ebs
+    - cir
+    - eir
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: configure flow
+  - startswith: configure a2n-shaper
+  - startswith: buffersize
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: configure n2a-shaper
+  - startswith: buffersize
+- lineage:
+  - startswith: user-security
+  - startswith: tacacs-user-privilege
+
+# Default when expression: list of expressions
+negation_default_when: []
+
+# Negate substitutions: expression -> negate with
+negation_negate_with:
+# Loopback default settings
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: lpbk
+  use: |
+    lpbk
+            dst-mac-control disabled
+            swap-sada none
+            back
+# Network port default settings
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure network-port
+  - startswith: auto-diagnostic
+  use: auto-diagnostic enabled
+# DCN default settings
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure dcn
+  use: |
+    configure dcn
+          admin-state in-service
+          speed auto
+          alias ""
+          mdix auto
+          back
+# eth0 default settings
+- lineage:
+  - startswith: configure communication
+  - startswith: configure eth0 dhcp-client-id-type
+  use: configure eth0 dhcp-client-id-type mac-addr
+# set access ports unassigned
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: admin-state
+  use: admin-state unassigned
+# unassign alias
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure
+  - startswith: alias
+  use: alias ""
+# accept-dhcp-boot-file
+- lineage:
+  - startswith: configure system
+  - startswith: accept-dhcp-boot-file
+  use: accept-dhcp-boot-file enabled
+# rfc2544 config
+- lineage:
+  - startswith: network-element
+  - startswith: configure rfc2544-control
+  use: |
+    configure rfc2544-control rfc2544_control-1-1
+        delete test-stream rfc2544_test_stream-1-1-1
+        test-port access-1-1-1-3
+        trial-duration 60
+        rate-granularity ten-percent
+        frame-size-list none
+        back
+
+# Negate expressions with replace: lineage expression -> negate replace
+# Use search and replace options to find and replace some line expression
+negation_replace:
+- lineage:
+  - startswith: configure snmp
+  - startswith: add target-address
+  search: add (target-address "\S+") .*
+  replace: 'delete \1 '
+- lineage:
+  - startswith: configure communication
+  - startswith: add mgmttunnel
+  search: add mgmttunnel (\d+) .*
+  replace: 'delete mgmttnl mgmt_tnl-\1'
+- lineage:
+  - startswith: configure communication
+  - startswith: add ip-route
+  search: add ip-route nexthop (\S+) (\S+) (\S+) (\S+).*
+  replace: 'delete ip-route \1 \2 \3 \4'
+# a2n default buffersize
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: configure flow
+  - startswith: configure a2n-shaper
+  search: configure a2n-shaper (.*)
+  replace: |
+    configure a2n-shaper \1
+              buffersize 128
+              back
+
+# Sections which aren't negated
+- lineage:
+  - startswith: configure communication
+  - startswith: configure mgmttnl
+  search: configure mgmttnl.*
+  replace: ''
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: configure flow
+  search: configure flow.*
+  replace: ''
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: configure n2a-shaper
+  search: configure n2a-shaper.*
+  replace: ''
+
+# acl entries
+- lineage:
+  - startswith: configure system
+  - startswith: acl-entry
+  search: acl-entry (.*)
+  replace: |
+    acl-entry \1
+        control disabled
+        configure permit ipv4 0.0.0.0 255.255.255.255
+        back
+
+rewrite_rules:
+- lineage:
+  - startswith: network-element
+  - startswith: configure nte
+  - startswith: configure access-port
+  - startswith: delete add flow
+  custom_adva_function: true
+  search: (delete )?add flow flow-(?P<flow_id>\S+) (?P<circuit_name>.+?) (?P<evc_type>\S+) (?P<untag_ctrl>\S+) (?P<outer_tag_prio_swap>\S+) (?P<inner_tag_prio_swap>\S+) (?P<multi_cos_ctrl>\S+) (?P<default_cos>\S+) (?P<n2a_prio_tag_type>inner-vlantag|n2a-priority-mapping|outer-vlantag)?\s*(?P<rate_lmt_ctrl>\S+) (?P<c_tag_operation>\S+) (?P<ctag>\d+)? (?P<s_tag_operation>\S+) (?P<stag>\d+)?\s*(?P<vlan_list>\S+) (?P<policer_cir>\S+) (?P<policer_eir>\S+)\s*(?P<prio_map_profile_eid>prio-map-profile-\d)? access-interface (?P<access_interface>\S+) network-interface (?P<network_interface>\S+)\s*(?P<shaping_type>\S+).*
+  replace: |
+    configure flow flow-\g<flow_id>
+            circuit-name \g<circuit_name>
+            ctag \g<c_tag_operation> \g<ctag>
+            vlan-members \g<vlan_list>
+            configure a2n-policer a2n_policer-\g<flow_id>-0
+              cir \g<policer_cir>
+              eir \g<policer_eir>
+              back
+            back
+  negation_search: delete add flow flow-(?P<flow_id>\S+).*
+  negation_replace: |
+    admin-state unassigned
+          delete flow flow-\g<flow_id>

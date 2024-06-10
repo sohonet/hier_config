@@ -30,6 +30,16 @@ def options_ios():
 
 
 @pytest.fixture(scope="module")
+def options_adva():
+    return yaml.safe_load(open(f"{_fixture_dir()}/options_adva.yml").read())
+
+
+@pytest.fixture(scope="module")
+def options_aruba():
+    return yaml.safe_load(open(f"{_fixture_dir()}/options_aruba.yml").read())
+
+
+@pytest.fixture(scope="module")
 def tags_ios():
     return yaml.safe_load(open(f"{_fixture_dir()}/tags_ios.yml").read())
 
