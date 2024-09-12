@@ -110,7 +110,7 @@ idempotent_commands:
   - startswith: configure n2a-shaper
   - startswith: buffersize
 - lineage:
-  - startswith: user-security
+  - startswith: configure user-security
   - startswith: tacacs-user-privilege
 
 # Default when expression: list of expressions
@@ -191,7 +191,6 @@ negation_negate_with:
   - startswith: configure access-port
   - startswith: n2a-pop-port-vid
   use: n2a-pop-port-vid disabled
-
 
 # Negate expressions with replace: lineage expression -> negate replace
 # Use search and replace options to find and replace some line expression
