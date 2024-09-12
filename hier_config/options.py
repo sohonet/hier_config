@@ -681,6 +681,13 @@ eos_options: dict = {
             ]
         }
     ],
+    "sectional_overwrite": [
+        {
+            "lineage": [
+                {"startswith": "ip access-list"}
+            ]
+        }
+    ]
 }
 
 
