@@ -38,6 +38,10 @@ def options_adva():
 def options_aruba():
     return yaml.safe_load(open(f"{_fixture_dir()}/options_aruba.yml").read())
 
+@pytest.fixture(scope="module")
+def options_optiswitch():
+    return yaml.safe_load(open(f"{_fixture_dir()}/options_optiswitch.yml").read())
+
 
 @pytest.fixture(scope="module")
 def tags_ios():
