@@ -268,6 +268,7 @@ network-element ne-1
       lpbk
         dst-mac-control disabled
         swap-sada none
+        outer-vlan1 4094-0
         back
       back
     back
@@ -424,6 +425,7 @@ network-element ne-1
   configure nte ntexg108-1-1-1
     configure access-port access-1-1-1-7
       configure flow flow-1-1-1-7-1
+        untagged-traffic enabled
         circuit-name "SNW0081751"
         ctag push-vid 1517
         vlan-members "0:4095"
@@ -459,6 +461,7 @@ network-element ne-1
   configure nte ntexg108-1-1-1
     configure access-port access-1-1-1-7
       configure flow flow-1-1-1-7-1
+        untagged-traffic enabled
         circuit-name "SNW0081751"
         ctag push-vid 1518
         vlan-members "0:4095"
@@ -494,6 +497,7 @@ network-element ne-1
   configure nte ntexg108-1-1-1
     configure access-port access-1-1-1-7
       configure flow flow-1-1-1-7-1
+        untagged-traffic enabled
         circuit-name "SNW0081751"
         ctag push-vid 1517
         vlan-members "0:4095"
@@ -541,6 +545,7 @@ network-element ne-1
   configure nte ntexg108-1-1-1
     configure access-port access-1-1-1-7
       configure flow flow-1-1-1-7-1
+        untagged-traffic enabled
         circuit-name "SNW0081751"
         ctag push-vid 1517
         vlan-members "0:4095"

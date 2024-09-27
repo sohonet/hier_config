@@ -112,6 +112,9 @@ idempotent_commands:
 - lineage:
   - startswith: configure user-security
   - startswith: tacacs-user-privilege
+- lineage:
+  - startswith: network-element
+  - startswith: location
 
 # Default when expression: list of expressions
 negation_default_when: []
@@ -128,6 +131,7 @@ negation_negate_with:
     lpbk
             dst-mac-control disabled
             swap-sada none
+            outer-vlan1 4094-0
             back
 # Network port default settings
 - lineage:
@@ -271,6 +275,7 @@ rewrite_rules:
   search: (delete )?add flow flow-(?P<flow_id>\S+) (?P<circuit_name>.+?) (?P<evc_type>\S+) (?P<untag_ctrl>\S+) (?P<outer_tag_prio_swap>\S+) (?P<inner_tag_prio_swap>\S+) (?P<multi_cos_ctrl>\S+) (?P<default_cos>\S+) (?P<n2a_prio_tag_type>inner-vlantag|n2a-priority-mapping|outer-vlantag)?\s*(?P<rate_lmt_ctrl>\S+) (?P<c_tag_operation>\S+) (?P<ctag>\d+)? (?P<s_tag_operation>\S+) (?P<stag>\d+)?\s*(?P<vlan_list>\S+) (?P<policer_cir>\S+) (?P<policer_eir>\S+)\s*(?P<prio_map_profile_eid>prio-map-profile-\d)? access-interface (?P<access_interface>\S+) network-interface (?P<network_interface>\S+)\s*(?P<shaping_type>\S+).*
   replace: |
     configure flow flow-\g<flow_id>
+            untagged-traffic enabled
             circuit-name \g<circuit_name>
             ctag \g<c_tag_operation> \g<ctag>
             vlan-members \g<vlan_list>
