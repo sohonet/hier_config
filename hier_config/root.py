@@ -288,7 +288,7 @@ class HConfig(HConfigBase):  # pylint: disable=too-many-public-methods
         """
         Applies rewrite rules on remediation config
         """
-        for child in self.all_children():
+        for child in list(self.all_children()):
             for rule in self.options["rewrite_rules"]:
                 if child.lineage_test(rule):
                     if rule.get("custom_adva_function"):
