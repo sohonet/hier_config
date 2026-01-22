@@ -729,7 +729,7 @@ def options_for(os: str) -> dict:
         "iosxr": iosxr_options,
         "nxos": nxos_options,
         "eos": eos_options,
-        "aruba": aruba_options,
+        "arubaos": aruba_options,
     }
 
     if options.get(os):
