@@ -732,6 +732,8 @@ def options_for(os: str) -> dict:
         "arubaos": aruba_options,
     }
 
+    print(f"DEBUG: options_for('{os}') returning keys: {list(result.keys())}")  # <-- add this
+
     if options.get(os):
         return {**base_options, **options[os]}
 
