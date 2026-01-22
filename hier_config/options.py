@@ -690,6 +690,36 @@ eos_options: dict = {
     ]
 }
 
+aruba_options: dict = {
+    "style": "aruba",
+    "per_line_sub": [
+        {"search": "^Current configuration.*", "replace": ""},
+        {"search": "^!Version.*", "replace": ""},
+        {"search": "^!export-password.*", "replace": ""},
+    ],
+    "idempotent_commands": [
+        {"lineage": [{"startswith": "hostname"}]},
+        {"lineage": [{"startswith": "radius-server key"}]},
+        {"lineage": [{"startswith": "aaa authentication"}]},
+        {"lineage": [{"startswith": "aaa group server radius"}]},
+        {"lineage": [{"startswith": "banner"}]},
+        {"lineage": [{"startswith": "snmp-server community"}]},
+        {"lineage": [{"startswith": "logging"}]},
+    ],
+    "negation_replace": [
+        {
+            "lineage": [{"re_search": r"^radius-server host \S+ key ciphertext"}],
+            "replace_with": "no radius-server host {0}",
+        },
+    ],
+    "ordering": [
+        {"lineage": [{"startswith": "radius-server key"}], "order": 100},
+        {"lineage": [{"startswith": "radius-server host"}], "order": 200},
+        {"lineage": [{"startswith": "aaa group server"}], "order": 300},
+        {"lineage": [{"startswith": "aaa authentication"}], "order": 400},
+    ],
+}
+
 
 def options_for(os: str) -> dict:
     """Create base options on an OS level."""
@@ -699,6 +729,7 @@ def options_for(os: str) -> dict:
         "iosxr": iosxr_options,
         "nxos": nxos_options,
         "eos": eos_options,
+        "aruba": aruba_options,
     }
 
     if options.get(os):
